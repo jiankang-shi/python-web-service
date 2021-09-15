@@ -30,13 +30,13 @@ def index(topic_name):
     return "<h1 style='color:red'> %s </h1> " %topic_name
 
 # def get_partitions(topic):
-#     client = KafkaClient(bootstrap_servers=['l-logcollectkafka1.ops.cna:9092'], request_timeout_ms=3000)
+#     client = KafkaClient(bootstrap_servers=['x'], request_timeout_ms=3000)
 #     # print(client.cluster.available_partitions_for_topic(topic=topic))
 #     # partitions = client.cluster.available_partitions_for_topic(topic)
 #     # print("00000",partitions)
 
 def add_partition(topic,Pum):
-    client = KafkaAdminClient(bootstrap_servers="l-logcollectkafka1.ops.cna:9092")
+    client = KafkaAdminClient(bootstrap_servers="x")
     print (client.create_partitions({topic: NewPartitions(Pum)}))
     now = (time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
     addinfolog = '%s info topic:%s add_partitions:%s success' %(now,topic,Pum)
@@ -44,7 +44,7 @@ def add_partition(topic,Pum):
     logging.info()
 
 def get_partition(topic):
-    zk = KazooClient(hosts='l-logcollectkafka1.ops.cna,l-logcollectkafka2.ops.cna,l-logcollectkafka3.ops.cna,l-logcollectkafka4.ops.cna,l-logcollectkafka5.ops.cna',logger=None)
+    zk = KazooClient(hosts='x',logger=None)
     zk.start()
     print (zk.exists('/brokers/topics/%s/partitions' %topic))
     node = zk.get_children('/brokers/topics/%s/partitions' %topic)

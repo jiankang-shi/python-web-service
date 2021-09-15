@@ -11,9 +11,9 @@ app = Flask(__name__)
 
 
 cluster_name = "pf_kafka_docker_log"
-conn = psycopg2.connect(dbname="logsysmeta", user="platform_bigdata_prd",
-                            password="2d7e3ec9-6256-400a-bba8-09a923b35203", host="l-bigdatadbvip4.pf.cn6",
-                            port="5432")
+conn = psycopg2.connect(dbname="x", user="x",
+                            password="x", host="x",
+                            port="x")
 
 LOG_FORMAT = "%(asctime)s %(name)s %(levelname)s %(message)s"
 DATE_FORMAT = '%Y-%m-%d  %H:%M:%S %a '
@@ -44,7 +44,7 @@ def day(infor):
     cmd ='sh  /opt/work/qt_alter.sh %s %s'  %(startTime,infor)
 
 def add_partition(topic,Pum):
-    client = KafkaAdminClient(bootstrap_servers="l-logcollectkafka1.ops.cna:9092")
+    client = KafkaAdminClient(bootstrap_servers="x")
     print (client.create_partitions({topic: NewPartitions(Pum)}))
     now = (time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
     addinfolog = '%s info topic:%s add_partitions:%s success' %(now,topic,Pum)
@@ -79,7 +79,7 @@ def pg_insert(topic_name,now_partitions,add_partitions):
     logging.info(adddblog)
 
 def get_partition(topic):
-    zk = KazooClient(hosts='l-logcollectkafka1.ops.cna,l-logcollectkafka2.ops.cna,l-logcollectkafka3.ops.cna,l-logcollectkafka4.ops.cna,l-logcollectkafka5.ops.cna',logger=None)
+    zk = KazooClient(hosts='x',logger=None)
     zk.start()
     print (zk.exists('/brokers/topics/%s/partitions' %topic))
     node = zk.get_children('/brokers/topics/%s/partitions' %topic)

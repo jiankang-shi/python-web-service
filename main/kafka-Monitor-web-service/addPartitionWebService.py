@@ -39,8 +39,8 @@ def sendqt(infor):
 
 
 def add_partition(topic, Pum):
-    # client = KafkaAdminClient(bootstrap_servers="l-logcollectkafka1.ops.cna:9092",logger=info)
-    client = KafkaAdminClient(bootstrap_servers="l-logcollectkafka1.ops.cna:9092")
+    # client = KafkaAdminClient(bootstrap_servers="x",logger=info)
+    client = KafkaAdminClient(bootstrap_servers="x")
     client.create_partitions({topic: NewPartitions(Pum)})
     addinfolog = 'topic_name:%s add_partitions:%s success' % (topic, Pum)
     sendilog = 'info:[topic_name:%s##add_partitions:%s##]' % (topic, Pum)
@@ -49,9 +49,9 @@ def add_partition(topic, Pum):
 
 
 def pg_select(topic):
-    conn = psycopg2.connect(dbname="logsysmeta", user="platform_bigdata_prd",
-                            password="2d7e3ec9-6256-400a-bba8-09a923b35203", host="l-bigdatadbvip4.pf.cn6",
-                            port="5432")
+    conn = psycopg2.connect(dbname="x", user="x",
+                            password="x", host="x",
+                            port="x")
     cursor = conn.cursor()
     cursor.execute(
         "select sum(add_partitions) from kafka_partitions where topic_name = '%s' and update_time::date = CURRENT_DATE;" % (
@@ -73,9 +73,9 @@ def pg_select(topic):
 
 def pg_insert(topic_name, now_partitions, add_partitions):
     # print (cluster_name,topic_name,now_partitions,add_partitions)
-    conn = psycopg2.connect(dbname="logsysmeta", user="platform_bigdata_prd",
-                            password="2d7e3ec9-6256-400a-bba8-09a923b35203", host="l-bigdatadbvip4.pf.cn6",
-                            port="5432")
+    conn = psycopg2.connect(dbname="x", user="x",
+                            password="x", host="x",
+                            port="x")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO kafka_partitions (cluster_name,topic_name,now_partitions,update_time,add_partitions) \
                    VALUES (%s,%s,%s,now(),%s)", (cluster_name, topic_name, now_partitions, add_partitions))
