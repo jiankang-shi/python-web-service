@@ -4,6 +4,7 @@ import time
 import logging
 import psycopg2
 import subprocess
+from flask import request
 from flask import Flask
 from kazoo.client import KazooClient
 from kafka.admin import KafkaAdminClient, NewPartitions
@@ -23,8 +24,11 @@ logging.basicConfig(level=logging.INFO,
 @app.route('/addpartitions/<topic>')
 def index(topic):
     try:
+        value = request.args.get("l")
+        logging.info("xxxxxv%s:%s" % (topic, value))
+
         logging.info("1********start--select:%s********" % (topic))
-        pg_select(topic)
+        # pg_select(topic,value)
         code = 200
         # return "<h1 style='color:red'> %s %s </h1> " %(topic,code)
         return "topic_name:%s,Right_code:%s" % (topic, code)
@@ -33,14 +37,16 @@ def index(topic):
         return "topic_name:%s,Error_code:%s" % (topic, code)
 
 
+
 def sendqt(infor):
+    startTime = (time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
     cmd = 'sh  /opt/work/addPQT.sh %s ' % infor
     (status, output) = subprocess.getstatusoutput(cmd)
 
 
 def add_partition(topic, Pum):
-    # client = KafkaAdminClient(bootstrap_servers="x",logger=info)
-    client = KafkaAdminClient(bootstrap_servers="x")
+    # client = KafkaAdminClient(bootstrap_servers="l-logcollectkafka1.ops.cna:9092",logger=info)
+    client = KafkaAdminClient(bootstrap_servers="l-logcollectkafka1.ops.cna:9092")
     client.create_partitions({topic: NewPartitions(Pum)})
     addinfolog = 'topic_name:%s add_partitions:%s success' % (topic, Pum)
     sendilog = 'info:[topic_name:%s##add_partitions:%s##]' % (topic, Pum)
@@ -48,10 +54,10 @@ def add_partition(topic, Pum):
     sendqt(sendilog)
 
 
-def pg_select(topic):
-    conn = psycopg2.connect(dbname="x", user="x",
-                            password="x", host="x",
-                            port="x")
+def pg_select(topic,value):
+    conn = psycopg2.connect(dbname="logsysmeta", user="platform_bigdata_prd",
+                            password="2d7e3ec9-6256-400a-bba8-09a923b35203", host="l-bigdatadbvip4.pf.cn6",
+                            port="5432")
     cursor = conn.cursor()
     cursor.execute(
         "select sum(add_partitions) from kafka_partitions where topic_name = '%s' and update_time::date = CURRENT_DATE;" % (
@@ -62,7 +68,7 @@ def pg_select(topic):
     # print (temp[0][0])
     if str((temp[0][0])) == 'None' or int((temp[0][0])) < 50:
         logging.info("2********select--db:%s:is None/<50 ********" % (topic))
-        get_partition(topic)
+        get_partition(topic,value)
     else:
         now = (time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
         addwarnlog = '********END**********topic:%s Today_is_add_partition_exceed_50********' % topic
@@ -73,9 +79,9 @@ def pg_select(topic):
 
 def pg_insert(topic_name, now_partitions, add_partitions):
     # print (cluster_name,topic_name,now_partitions,add_partitions)
-    conn = psycopg2.connect(dbname="x", user="x",
-                            password="x", host="x",
-                            port="x")
+    conn = psycopg2.connect(dbname="logsysmeta", user="platform_bigdata_prd",
+                            password="2d7e3ec9-6256-400a-bba8-09a923b35203", host="l-bigdatadbvip4.pf.cn6",
+                            port="5432")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO kafka_partitions (cluster_name,topic_name,now_partitions,update_time,add_partitions) \
                    VALUES (%s,%s,%s,now(),%s)", (cluster_name, topic_name, now_partitions, add_partitions))
@@ -87,7 +93,7 @@ def pg_insert(topic_name, now_partitions, add_partitions):
     conn.close()
 
 
-def get_partition(topic):
+def get_partition(topic,value):
     zk = KazooClient(hosts='l-logcollectkafka1.ops.cna')
     zk.start()
     zkdir = '/brokers/topics/%s/partitions' % topic
@@ -98,7 +104,8 @@ def get_partition(topic):
             # print (node)
             data = map(eval, node)
             currentP = (max(data) + 1)
-            needaddp = currentP // 2
+            # needaddp = currentP // 2
+            needaddp = (currentP  * value)/10
             # print (currentP,needaddp)
             if needaddp == 0:
                 saddplogz = "zero********START topic_name:%s  add partition:%s" % (topic, needaddp)

@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 
 cluster_name = "pf_kafka_docker_log"
-conn = psycopg2.connect(dbname="x", user="x",
+conn = psycopg2.connect(dbname="kafka_partitions", user="platform_bigdata_prd",
                             password="x", host="x",
                             port="x")
 
