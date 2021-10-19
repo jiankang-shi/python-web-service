@@ -80,9 +80,9 @@ def pg_select(topic, flow):
 
 def pg_insert(topic_name, now_partitions, add_partitions):
     # print (cluster_name,topic_name,now_partitions,add_partitions)
-    conn = psycopg2.connect(dbname="logsysmeta", user="platform_bigdata_prd",
-                            password="2d7e3ec9-6256-400a-bba8-09a923b35203", host="l-bigdatadbvip4.pf.cn6",
-                            port="5432")
+    conn = psycopg2.connect(dbname="x", user="x",
+                            password="x", host="x",
+                            port="x")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO kafka_partitions (cluster_name,topic_name,now_partitions,update_time,add_partitions) \
                    VALUES (%s,%s,%s,now(),%s)", (cluster_name, topic_name, now_partitions, add_partitions))
