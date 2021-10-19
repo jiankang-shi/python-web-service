@@ -114,7 +114,7 @@ def currency(topic, singlePflow, flowss, currentP):
             logging.info(eaddplog)
 
     else:
-        exitlog = "topic:%s Average flow:%s 不大于10M" % (topic, singlePflow)
+        exitlog = "topic:%s Average partitions flow:%s 不大于10M" % (topic, singlePflow)
         logging.info(exitlog)
 
 
