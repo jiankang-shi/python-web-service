@@ -24,12 +24,15 @@ logging.basicConfig(level=logging.INFO,
 @app.route('/addpartitions/<topic>')
 def index(topic):
     try:
-        flow = request.args.get("l")
-        logging.info("1********start--select:%s & flow:%s********" % (topic, flow))
-        pg_select(topic, flow)
-        code = 200
-        # return "<h1 style='color:red'> %s %s </h1> " %(topic,code)
-        return "topic_name:%s,Right_code:%s" % (topic, code)
+        if topic == "pub_tc_qtrace_k8s_span_prod":
+            logging.info("****current topic:%s not automation add partitions ****" %topic)
+        else:
+            flow = request.args.get("l")
+            logging.info("1********start--select:%s & flow:%s********" % (topic, flow))
+            pg_select(topic, flow)
+            code = 200
+            # return "<h1 style='color:red'> %s %s </h1> " %(topic,code)
+            return "topic_name:%s,Right_code:%s" % (topic, code)
     except:
         code = 500
         return "topic_name:%s,Error_code:%s" % (topic, code)
